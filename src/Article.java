@@ -27,7 +27,7 @@ public class Article {
         this.marque = marque;
     }
 
-    public double getPrix() {
+    public int getPrix() {
         return prix;
     }
 
@@ -70,7 +70,7 @@ public class Article {
         }
     }
 
-    public void CreateArticle(Connection con, int role) {
+    public static void CreateArticle(Connection con, int role) {
         if(role == 1){
             Scanner sc = new Scanner(System.in);
             System.out.println("write the name of article you want to create");
@@ -94,7 +94,7 @@ public class Article {
         }
     }
 
-    public void GetArticle(Connection con) {
+    public static void GetArticle(Connection con) {
         ArrayList<Article> articles = new ArrayList<>();
         try {
             Statement stmt = con.createStatement();
@@ -105,6 +105,6 @@ public class Article {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        articles.forEach((user) -> System.out.println(user.toString()));
+        articles.forEach((article) -> System.out.println(article.toString()));
     }
 }

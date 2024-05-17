@@ -72,11 +72,15 @@ public class User {
             String login = sc.nextLine();
             System.out.println("write the password you want to create");
             String password = sc.nextLine();
-            System.out.println("write the solde");
-            int solde = sc.nextInt();
+            System.out.println("write the name");
+            String name = sc.nextLine();
+            System.out.println("write the surname");
+            String surname = sc.nextLine();
+            System.out.println("write the role");
+            int role = sc.nextInt();
             try {
                 Statement stmt = con.createStatement();
-                stmt.executeUpdate("insert into user values('"+id+"','"+login+"','"+password+"','"+solde+"','user')");
+                stmt.executeUpdate("insert into user values('"+id+"','"+login+"','"+password+"','"+name+"','"+surname+"','"+role+"')");
                 System.out.println("User inserted");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -102,12 +106,42 @@ public class User {
         users.forEach((user) -> System.out.println(user.toString()));
     }
 
+    public void buyArticle(Connection con){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter name article:");
+        String article = sc.nextLine();
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("select * from article where nom = '"+article+"'");
+            if(rs.next()){
+                Article articleSelectionne =  new Article(rs.getString("nom"),rs.getString("marque"),rs.getInt("prix"),rs.getInt("quantite"));
+                System.out.println("Enter quantity you want to buy:");
+                int quantity = sc.nextInt();
+                if (quantity <= articleSelectionne.getQuantite()){
+                    try{
+                        stmt = con.createStatement();
+                        stmt.executeUpdate("update article set quantite = '"+(articleSelectionne.getQuantite() - quantity) + "' where name = '" + article + "'");
+                        int totalPrix = quantity * articleSelectionne.getPrix();
+
+                        Commande commande = new Commande(this.nom, articleSelectionne.getNom(), totalPrix);
+                        stmt.executeUpdate("insert into user values('"+id+"','CURRENT_TIMESTAMP','"+commande.getUserCommande()+"','"+totalPrix+"','"+commande.getArticleName()+"')");
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.out.println("Quantité insuffisante");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public int MenuUser(){
 
         System.out.println("Welcome User");
         System.out.println("choose an action : ");
         System.out.println("66.Display all articles ");
-        System.out.println("2.Make a payment");
+        System.out.println("2.Make a purchase");
         System.out.println("0.Quit");
 
         int a;

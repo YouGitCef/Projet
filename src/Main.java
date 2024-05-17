@@ -12,7 +12,7 @@ public class Main {
         String password = scanner.nextLine();
         try {
             Statement stmt = con.createStatement();
-            ResultSet rs =stmt.executeQuery("select * from users where Login = '"+login+"' and password = '"+password+"'");
+            ResultSet rs =stmt.executeQuery("select * from user where Login = '"+login+"' and password = '"+password+"'");
             if(rs.next()){
                 return new User(rs.getString("login"),rs.getString("password"),rs.getString("nom"),rs.getString("prenom"),rs.getInt("role"));
             }
@@ -36,25 +36,31 @@ public class Main {
         }
         int a;
         do {
-            if(Objects.equals(connectedUser.getRole(), "admin")){
+            if(connectedUser.getRole() == 1){
                 a = connectedUser.MenuAdmin();
             }else {
                 a = connectedUser.MenuUser();
             }
             switch(a){
+                case 2:
+                    connectedUser.buyArticle(con);
+                    break;
                 case 11:
                     connectedUser.CreateUser(con);
                     break;
-
                 case 22:
                     connectedUser.DeleteUser(con);
                     break;
                 case 33:
                     connectedUser.GetUsers(con);
                     break;
+                case 44:
+                    Article.CreateArticle(con, connectedUser.getRole());
+                    break;
+                case 66:
+                    Article.GetArticle(con);
+                    break;
             }
         }while (a!=0);
-
-
     }
 }
